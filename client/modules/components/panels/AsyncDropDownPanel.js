@@ -9,6 +9,7 @@ import { message, Menu, Dropdown, Icon } from 'antd';
 import {CodeSnippet} from '../misc/CodeSnippet';
 import {createCollapsedPanel} from '../misc/collapsed';
 import R from 'ramda';
+import { compose } from 'react-komposer';
 
 const apiUrl = 'https://api.github.com/search/repositories?sort=stars&q=stars:%3E0&order=desc';
 

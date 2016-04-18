@@ -7,6 +7,7 @@ import React from 'react';
 import {FlatButton, Paper} from 'material-ui';
 import {CodeSnippet} from '../misc/CodeSnippet';
 import {createCollapsedPanel} from '../misc/collapsed';
+//import { compose } from 'react-komposer';
 
 const code2b = `
 class Polling extends React.Component {
@@ -137,6 +138,18 @@ const WrappedComponent = intervaledComponent(
   function () {
     this.setState({count: (this.state.count || 0) + 1});
   }, 1000)(InnerComponent);
+
+//// react-komposer way
+//const KomposedComponent = compose((props, onData) => {
+//  let count = 0;
+//  onData(null, {count});
+//  const handle = setInterval(() => {
+//    count += 1;
+//    onData(null, {count});
+//  }, 1000);
+//
+//  return () => clearInterval(handle);
+//})(InnerComponent);
 
 export const PollingPanel = (props) => {
   // 根据sub决定显示哪一段代码
