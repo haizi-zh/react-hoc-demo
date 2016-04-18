@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 import {mount} from 'react-mounter';
 // load Layout and Welcome React components
 import {Layout} from './modules/components/Layout';
@@ -23,37 +24,35 @@ FlowRouter.route('/:category', {
   }
 });
 
-FlowRouter.route("/:category/:sub", {
+FlowRouter.route('/:category/:sub', {
   action(params) {
-    const categories = ['polling', 'async-drop-down', 'meteor-data'];
-    const subs = ['2b', 'hoc'];
+    const categories = [ 'polling', 'async-drop-down', 'meteor-data' ];
+    const subs = [ '2b', 'hoc' ];
     const category = params.category;
     const sub = params.sub;
 
     if (categories.indexOf(category) === -1) {
       FlowRouter.go('/polling/2b');
+    } else if (subs.indexOf(sub) === -1) {
+      FlowRouter.go(`/${category}/2b`);
     } else {
-      if (subs.indexOf(sub) === -1) {
-        FlowRouter.go(`/${category}/2b`);
-      } else {
-        const panelDict = {
-          'polling': PollingPanel,
-          'async-drop-down': AsyncDropDownPanel,
-          'meteor-data': MeteorDataPanel
-        };
+      const panelDict = {
+        polling: PollingPanel,
+        'async-drop-down': AsyncDropDownPanel,
+        'meteor-data': MeteorDataPanel
+      };
 
-        const panel = panelDict[category] || 'div';
+      const panel = panelDict[category] || 'div';
 
-        mount(Layout, {
-          content: (
-            <div style={{minHeight: 400}}>
-              {React.createElement(panel, {sub})}
-            </div>
-          ),
-          category,
-          sub
-        });
-      }
+      mount(Layout, {
+        content: (
+          <div style={{minHeight: 400}}>
+            {React.createElement(panel, {sub})}
+          </div>
+        ),
+        category,
+        sub
+      });
     }
   }
 });

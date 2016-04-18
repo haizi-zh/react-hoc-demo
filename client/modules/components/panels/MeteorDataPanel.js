@@ -5,19 +5,18 @@
 
 import React from 'react';
 import { message, Checkbox, Row, Icon } from 'antd';
-import {Paper} from 'material-ui';
-import {Tasks} from '/imports/api/tasks';
+import { Paper } from 'material-ui';
+import { Tasks } from '/imports/api/tasks';
 import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
+import { ReactMeteorData } from 'meteor/react-meteor-data';
 import { composeWithTracker } from 'react-komposer';
 import { createCollapsedPanel } from '../misc/collapsed';
 import { CodeSnippet } from '../misc/CodeSnippet';
 import R from 'ramda';
 
-const code2b =
-`
+const code2b = `
 const MeteorData = React.createClass({
-  mixins: [ReactMeteorData],
+  mixins: [ ReactMeteorData ],
 
   getMeteorData() {
     const handle = Meteor.subscribe('tasks');
@@ -29,16 +28,20 @@ const MeteorData = React.createClass({
 
   handleChange(taskId) {
     if (!this.data.loading) {
-      const task = R.find((task) => task._id.toHexString() === taskId, this.data.tasks || []);
+      const task = R.find((v) => v._id.toHexString() === taskId, this.data.tasks || []);
       if (task) {
-        Meteor.call('tasks.setChecked', taskId, !task.checked);
+        Meteor.call('tasks.setChecked', taskId, !task.checked, (err) => {
+          if (!err) {
+            message.success('Task list updated.', 2);
+          }
+        });
       }
     }
   },
 
   render() {
     const createTask = (taskEntry) => {
-      const checked = !!taskEntry.checked;
+      const checked = Boolean(taskEntry.checked);
       const taskId = taskEntry._id.toHexString();
 
       return (
@@ -53,7 +56,8 @@ const MeteorData = React.createClass({
       );
     };
 
-    const contents = this.data.loading ? <Icon type="loading" /> : R.map(createTask, this.data.tasks);
+    const contents = this.data.loading ?
+      <Icon type="loading" /> : R.map(createTask, this.data.tasks);
 
     return (
       <div>{contents}</div>
@@ -62,13 +66,12 @@ const MeteorData = React.createClass({
 });
 `;
 
-const codeHoc =
-`
+const codeHoc = `
 const composer = (props, onData) => {
   const handle = Meteor.subscribe('tasks');
   const ready = handle.ready();
   const tasks = ready ? Tasks.find().fetch() : [];
-  onData(null, {loading: !ready, tasks})
+  onData(null, {loading: !ready, tasks});
 };
 
 class InnerComponent extends React.Component {
@@ -78,16 +81,20 @@ class InnerComponent extends React.Component {
 
   handleChange(taskId) {
     if (!this.props.loading) {
-      const task = R.find((task) => task._id.toHexString() === taskId, this.props.tasks || []);
+      const task = R.find((v) => v._id.toHexString() === taskId, this.props.tasks || []);
       if (task) {
-        Meteor.call('tasks.setChecked', taskId, !task.checked);
+        Meteor.call('tasks.setChecked', taskId, !task.checked, (err) => {
+          if (!err) {
+            message.success('Task list updated.', 2);
+          }
+        });
       }
     }
   }
 
   render() {
     const createTask = (taskEntry) => {
-      const checked = !!taskEntry.checked;
+      const checked = Boolean(taskEntry.checked);
       const taskId = taskEntry._id.toHexString();
 
       return (
@@ -102,7 +109,8 @@ class InnerComponent extends React.Component {
       );
     };
 
-    const contents = this.props.loading ? <Icon type="loading" /> : R.map(createTask, this.props.tasks);
+    const contents = this.props.loading ?
+      <Icon type="loading" /> : R.map(createTask, this.props.tasks);
 
     return (
       <div>{contents}</div>
@@ -114,7 +122,7 @@ const WrappedComponent = composeWithTracker(composer)(InnerComponent);
 `;
 
 const MeteorData2b = React.createClass({
-  mixins: [ReactMeteorData],
+  mixins: [ ReactMeteorData ],
 
   getMeteorData() {
     const handle = Meteor.subscribe('tasks');
@@ -126,9 +134,9 @@ const MeteorData2b = React.createClass({
 
   handleChange(taskId) {
     if (!this.data.loading) {
-      const task = R.find((task) => task._id.toHexString() === taskId, this.data.tasks || []);
+      const task = R.find((v) => v._id.toHexString() === taskId, this.data.tasks || []);
       if (task) {
-        Meteor.call('tasks.setChecked', taskId, !task.checked, (err, res) => {
+        Meteor.call('tasks.setChecked', taskId, !task.checked, (err) => {
           if (!err) {
             message.success('Task list updated.', 2);
           }
@@ -139,7 +147,7 @@ const MeteorData2b = React.createClass({
 
   render() {
     const createTask = (taskEntry) => {
-      const checked = !!taskEntry.checked;
+      const checked = Boolean(taskEntry.checked);
       const taskId = taskEntry._id.toHexString();
 
       return (
@@ -154,7 +162,8 @@ const MeteorData2b = React.createClass({
       );
     };
 
-    const contents = this.data.loading ? <Icon type="loading" /> : R.map(createTask, this.data.tasks);
+    const contents = this.data.loading ?
+      <Icon type="loading" /> : R.map(createTask, this.data.tasks);
 
     return (
       <div>{contents}</div>
@@ -166,7 +175,7 @@ const composer = (props, onData) => {
   const handle = Meteor.subscribe('tasks');
   const ready = handle.ready();
   const tasks = ready ? Tasks.find().fetch() : [];
-  onData(null, {loading: !ready, tasks})
+  onData(null, {loading: !ready, tasks});
 };
 
 class InnerComponent extends React.Component {
@@ -176,9 +185,9 @@ class InnerComponent extends React.Component {
 
   handleChange(taskId) {
     if (!this.props.loading) {
-      const task = R.find((task) => task._id.toHexString() === taskId, this.props.tasks || []);
+      const task = R.find((v) => v._id.toHexString() === taskId, this.props.tasks || []);
       if (task) {
-        Meteor.call('tasks.setChecked', taskId, !task.checked, (err, res) => {
+        Meteor.call('tasks.setChecked', taskId, !task.checked, (err) => {
           if (!err) {
             message.success('Task list updated.', 2);
           }
@@ -189,7 +198,7 @@ class InnerComponent extends React.Component {
 
   render() {
     const createTask = (taskEntry) => {
-      const checked = !!taskEntry.checked;
+      const checked = Boolean(taskEntry.checked);
       const taskId = taskEntry._id.toHexString();
 
       return (
@@ -204,7 +213,8 @@ class InnerComponent extends React.Component {
       );
     };
 
-    const contents = this.props.loading ? <Icon type="loading" /> : R.map(createTask, this.props.tasks);
+    const contents = this.props.loading ?
+      <Icon type="loading" /> : R.map(createTask, this.props.tasks);
 
     return (
       <div>{contents}</div>
@@ -225,16 +235,17 @@ export const MeteorDataPanel = (props) => {
       code = codeHoc;
       break;
     default:
-      break
+      break;
   }
 
   return (
     <div>
-      <Paper style={{padding: 20, marginBottom: 40, maxWidth: 600, borderRadius: 5, backgroundColor: '#f8f8f8'}}
+      <Paper style={{padding: 20, marginBottom: 40, maxWidth: 600,
+                     borderRadius: 5, backgroundColor: '#f8f8f8'}}
              zDepth={2}>
         {props.sub === '2b' ? <MeteorData2b /> : <WrappedComponent />}
       </Paper>
-      {createCollapsedPanel([{header: 'Source code', component: <CodeSnippet code={code}/>}])}
+      {createCollapsedPanel([ {header: 'Source code', component: <CodeSnippet code={code}/>} ])}
     </div>
   );
 };

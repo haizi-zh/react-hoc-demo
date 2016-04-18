@@ -5,6 +5,7 @@
 
 import 'antd/lib/index.css';
 import 'highlight.js/styles/github.css';
+import { Meteor } from 'meteor/meteor';
 
 Meteor.startup(() => {
 });

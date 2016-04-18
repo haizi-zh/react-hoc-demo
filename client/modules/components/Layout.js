@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import {Menu, Breadcrumb, Icon} from 'antd';
+import { Menu, Icon } from 'antd';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 const SubMenu = Menu.SubMenu;
 
 const MenuItem = (props) => {
@@ -29,7 +30,7 @@ export const Layout = ({content, category, sub}) => {
     <div className="ant-layout-aside">
       <aside className="ant-layout-sider">
         <Menu mode="inline" theme="dark"
-              defaultSelectedKeys={[`${category}-${sub}`]} defaultOpenKeys={[category]}>
+              defaultSelectedKeys={[ `${category}-${sub}` ]} defaultOpenKeys={[ category ]}>
           <SubMenu key="polling" title={<span><Icon type="clock-circle-o" />定时任务</span>}>
             <MenuItem key="polling-2b">菜鸟作法</MenuItem>
             <MenuItem key="polling-hoc">高阶组件</MenuItem>

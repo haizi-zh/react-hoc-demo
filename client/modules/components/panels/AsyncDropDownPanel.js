@@ -9,12 +9,10 @@ import { message, Menu, Dropdown, Icon } from 'antd';
 import {CodeSnippet} from '../misc/CodeSnippet';
 import {createCollapsedPanel} from '../misc/collapsed';
 import R from 'ramda';
-import { compose } from 'react-komposer';
 
 const apiUrl = 'https://api.github.com/search/repositories?sort=stars&q=stars:%3E0&order=desc';
 
-const code2b =
-  `
+const code2b = `
 class AsyncDropDown extends React.Component {
   constructor(props) {
     super(props);
@@ -34,7 +32,9 @@ class AsyncDropDown extends React.Component {
           })(data['items'] || []);
           const newState = {...state, ready: true, repos};
           this.setState(newState);
-        })
+
+          message.success('Fetching repos succeeded.', 2);
+        });
       }
     });
   }
@@ -42,21 +42,25 @@ class AsyncDropDown extends React.Component {
   render() {
     const menuItems = R.compose(R.take(10), R.map((repo) => {
       return (
-        <Menu.Item key={repo['name']}><a target="_blank" href={repo['url']}>{repo['name']}</a></Menu.Item>
+        <Menu.Item key={repo['name']}>
+          <a target="_blank" href={repo['url']}>{repo['name']}</a>
+        </Menu.Item>
       );
     }))(this.state.repos);
 
     const menu = (
       <Menu>
-        {this.state.ready ? menuItems : [(
-          <Menu.Item key="loading"><a href="#">&nbsp;&nbsp;Loading from GitHub...</a></Menu.Item>
-        )]}
+        {this.state.ready ? menuItems : [ (
+          <Menu.Item key="loading">
+            <span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span>
+          </Menu.Item>
+        ) ]}
       </Menu>
     );
 
     return (
       <div>
-        <Dropdown overlay={menu} trigger={['click']} onClick={this.handleClick}>
+        <Dropdown overlay={menu} trigger={[ 'click' ]} onClick={this.handleClick}>
           <a className="ant-dropdown-link" href="#">
             Click to fetch <Icon type="down"/>
           </a>
@@ -67,8 +71,7 @@ class AsyncDropDown extends React.Component {
 }
 `;
 
-const codeHoc =
-`
+const codeHoc = `
 const promisedComponent = (fn) =>
   (Component) =>
     (props) => {
@@ -81,39 +84,40 @@ class InnerComponent extends React.Component {
     super(props);
     this.state = {ready: false, data: []};
     this.handleClick = this.handleClick.bind(this);
-    if (this.props.promiseFn) {
-      this.promiseFn = this.props.promiseFn.bind(this);
-    }
+    this.promiseFn = this.props.promiseFn.bind(this);
   }
 
   handleClick() {
     const state = {...this.state, ready: false, data: []};
     this.setState(state);
 
-    if (this.promiseFn) {
-      this.promiseFn().then((data) => {
-        const newState = {...this.state, ready: !!data, data: data || []};
-        this.setState(newState);
-      })
-    }
+    this.promiseFn().then((data) => {
+      const newState = {...this.state, ready: Boolean(data), data: data || []};
+      this.setState(newState);
+      message.success('Fetching repos succeeded.', 2);
+    });
   }
 
   render() {
     const menuItems = R.compose(R.take(10), R.map((repo) =>
-      <Menu.Item key={repo['name']}><a target="_blank" href={repo['url']}>{repo['name']}</a></Menu.Item>
+      <Menu.Item key={repo['name']}>
+        <a target="_blank" href={repo['url']}>{repo['name']}</a>
+      </Menu.Item>
     ))(this.state.data);
 
     const menu = (
       <Menu>
-        {this.state.ready ? menuItems : [(
-          <Menu.Item key="loading"><span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span></Menu.Item>
-        )]}
+        {this.state.ready ? menuItems : [ (
+          <Menu.Item key="loading">
+            <span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span>
+          </Menu.Item>
+        ) ]}
       </Menu>
     );
 
     return (
       <div>
-        <Dropdown overlay={menu} trigger={['click']} onClick={this.handleClick}>
+        <Dropdown overlay={menu} trigger={[ 'click' ]} onClick={this.handleClick}>
           <a className="ant-dropdown-link" href="#">
             Click to fetch <Icon type="down"/>
           </a>
@@ -123,20 +127,20 @@ class InnerComponent extends React.Component {
   }
 }
 
-const AsyncDropDown = promisedComponent(() =>
+const WrappedComponent = promisedComponent(() =>
   new Promise((resolve, reject) =>
     fetch(apiUrl).then((res) => {
-        res.json().then(
-          (data) => {       // 获得data
-            const repos = R.map((entry) => {
-              return {name: entry['full_name'], url: entry['html_url']};
-            })(data['items'] || []);
-            resolve(repos);
-          })
-      },
-      (err) => {
-        reject(err);
-      })
+      res.json().then(
+        (data) => {       // 获得data
+          const repos = R.map((entry) => {
+            return {name: entry['full_name'], url: entry['html_url']};
+          })(data['items'] || []);
+          resolve(repos);
+        });
+    },
+    (err) => {
+      reject(err);
+    })
   )
 )(InnerComponent);
 `;
@@ -162,7 +166,7 @@ class AsyncDropDown2b extends React.Component {
           this.setState(newState);
 
           message.success('Fetching repos succeeded.', 2);
-        })
+        });
       }
     });
   }
@@ -170,21 +174,25 @@ class AsyncDropDown2b extends React.Component {
   render() {
     const menuItems = R.compose(R.take(10), R.map((repo) => {
       return (
-        <Menu.Item key={repo['name']}><a target="_blank" href={repo['url']}>{repo['name']}</a></Menu.Item>
+        <Menu.Item key={repo['name']}>
+          <a target="_blank" href={repo['url']}>{repo['name']}</a>
+        </Menu.Item>
       );
     }))(this.state.repos);
 
     const menu = (
       <Menu>
-        {this.state.ready ? menuItems : [(
-          <Menu.Item key="loading"><span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span></Menu.Item>
-        )]}
+        {this.state.ready ? menuItems : [ (
+          <Menu.Item key="loading">
+            <span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span>
+          </Menu.Item>
+        ) ]}
       </Menu>
     );
 
     return (
       <div>
-        <Dropdown overlay={menu} trigger={['click']} onClick={this.handleClick}>
+        <Dropdown overlay={menu} trigger={[ 'click' ]} onClick={this.handleClick}>
           <a className="ant-dropdown-link" href="#">
             Click to fetch <Icon type="down"/>
           </a>
@@ -214,28 +222,32 @@ class InnerComponent extends React.Component {
     this.setState(state);
 
     this.promiseFn().then((data) => {
-      const newState = {...this.state, ready: !!data, data: data || []};
+      const newState = {...this.state, ready: Boolean(data), data: data || []};
       this.setState(newState);
       message.success('Fetching repos succeeded.', 2);
-    })
+    });
   }
 
   render() {
     const menuItems = R.compose(R.take(10), R.map((repo) =>
-      <Menu.Item key={repo['name']}><a target="_blank" href={repo['url']}>{repo['name']}</a></Menu.Item>
+      <Menu.Item key={repo['name']}>
+        <a target="_blank" href={repo['url']}>{repo['name']}</a>
+      </Menu.Item>
     ))(this.state.data);
 
     const menu = (
       <Menu>
-        {this.state.ready ? menuItems : [(
-          <Menu.Item key="loading"><span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span></Menu.Item>
-        )]}
+        {this.state.ready ? menuItems : [ (
+          <Menu.Item key="loading">
+            <span><Icon type="loading"/>&nbsp;&nbsp;Loading from GitHub...</span>
+          </Menu.Item>
+        ) ]}
       </Menu>
     );
 
     return (
       <div>
-        <Dropdown overlay={menu} trigger={['click']} onClick={this.handleClick}>
+        <Dropdown overlay={menu} trigger={[ 'click' ]} onClick={this.handleClick}>
           <a className="ant-dropdown-link" href="#">
             Click to fetch <Icon type="down"/>
           </a>
@@ -248,17 +260,17 @@ class InnerComponent extends React.Component {
 const WrappedComponent = promisedComponent(() =>
   new Promise((resolve, reject) =>
     fetch(apiUrl).then((res) => {
-        res.json().then(
-          (data) => {       // 获得data
-            const repos = R.map((entry) => {
-              return {name: entry['full_name'], url: entry['html_url']};
-            })(data['items'] || []);
-            resolve(repos);
-          })
-      },
-      (err) => {
-        reject(err);
-      })
+      res.json().then(
+        (data) => {       // 获得data
+          const repos = R.map((entry) => {
+            return {name: entry['full_name'], url: entry['html_url']};
+          })(data['items'] || []);
+          resolve(repos);
+        });
+    },
+    (err) => {
+      reject(err);
+    })
   )
 )(InnerComponent);
 
@@ -273,16 +285,17 @@ export const AsyncDropDownPanel = (props) => {
       code = codeHoc;
       break;
     default:
-      break
+      break;
   }
 
   return (
     <div>
-      <Paper style={{padding: 20, marginBottom: 40, maxWidth: 600, borderRadius: 5, backgroundColor: '#f8f8f8'}}
+      <Paper style={{padding: 20, marginBottom: 40, maxWidth: 600, borderRadius: 5,
+                     backgroundColor: '#f8f8f8'}}
              zDepth={2}>
         {props.sub === '2b' ? <AsyncDropDown2b /> : <WrappedComponent />}
       </Paper>
-      {createCollapsedPanel([{header: 'Source code', component: <CodeSnippet code={code}/>}])}
+      {createCollapsedPanel([ {header: 'Source code', component: <CodeSnippet code={code}/>} ])}
     </div>
   );
 };

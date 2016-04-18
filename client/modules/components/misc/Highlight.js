@@ -26,24 +26,26 @@ export const Highlight = React.createClass({
     var domNode = ReactDOM.findDOMNode(this);
     var nodes = domNode.querySelectorAll('pre code');
     if (nodes.length > 0) {
-      for (var i = 0; i < nodes.length; i = i + 1) {
+      for (var i = 0; i < nodes.length; i++) {
         hljs.highlightBlock(nodes[i]);
       }
     }
   },
   render: function render() {
     if (this.props.innerHTML) {
-      return React.createElement('div', { dangerouslySetInnerHTML: { __html: this.props.children }, className: this.props.className || null });
-    } else {
-      return React.createElement(
-        'pre',
-        null,
-        React.createElement(
-          'code',
-          { className: this.props.className },
-          this.props.children
-        )
-      );
+      return React.createElement('div', {
+        dangerouslySetInnerHTML: { __html: this.props.children },
+        className: this.props.className || null
+      });
     }
+    return React.createElement(
+      'pre',
+      null,
+      React.createElement(
+        'code',
+        { className: this.props.className },
+        this.props.children
+      )
+    );
   }
 });

@@ -4,13 +4,13 @@
  */
 
 import React from 'react';
-import {FlatButton, Paper} from 'material-ui';
-import {CodeSnippet} from '../misc/CodeSnippet';
-import {createCollapsedPanel} from '../misc/collapsed';
-//import { compose } from 'react-komposer';
+import { Paper, FlatButton } from 'material-ui';
+import { CodeSnippet } from '../misc/CodeSnippet';
+import { createCollapsedPanel } from '../misc/collapsed';
+// import { compose } from 'react-komposer';
 
 const code2b = `
-class Polling extends React.Component {
+class PollingDemo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {count: props.initialCount || 0};
@@ -33,8 +33,8 @@ class Polling extends React.Component {
 
   render() {
     return (
-      <FlatButton label={'Count: ' + this.state.count} secondary={true}/>
-    )
+      <FlatButton label={\`Count: \${this.state.count}\`} secondary={true}/>
+    );
   }
 }
 `;
@@ -68,7 +68,8 @@ const intervaledComponent = (tickFn, interval) =>
     return Wrapper;
   };
 
-const InnerComponent = (props) => <FlatButton label={\`Count: \${props.count}\`} secondary={true}/>;
+const InnerComponent = (props) =>
+  <FlatButton label={\`Count: \${props.count || 0}\`} secondary={true}/>;
 
 const WrappedComponent = intervaledComponent(
   function () {
@@ -100,7 +101,7 @@ class PollingDemo2b extends React.Component {
   render() {
     return (
       <FlatButton label={`Count: ${this.state.count}`} secondary={true}/>
-    )
+    );
   }
 }
 
@@ -132,24 +133,25 @@ const intervaledComponent = (tickFn, interval) =>
     return Wrapper;
   };
 
-const InnerComponent = (props) => <FlatButton label={`Count: ${props.count || 0}`} secondary={true}/>;
+const InnerComponent = (props) =>
+  <FlatButton label={`Count: ${props.count || 0}`} secondary={true}/>;
 
 const WrappedComponent = intervaledComponent(
   function () {
     this.setState({count: (this.state.count || 0) + 1});
   }, 1000)(InnerComponent);
 
-//// react-komposer way
-//const KomposedComponent = compose((props, onData) => {
-//  let count = 0;
-//  onData(null, {count});
-//  const handle = setInterval(() => {
-//    count += 1;
-//    onData(null, {count});
-//  }, 1000);
+// // react-komposer way
+// const KomposedComponent = compose((props, onData) => {
+//   let count = 0;
+//   onData(null, {count});
+//   const handle = setInterval(() => {
+//     count += 1;
+//     onData(null, {count});
+//   }, 1000);
 //
-//  return () => clearInterval(handle);
-//})(InnerComponent);
+//   return () => clearInterval(handle);
+// })(InnerComponent);
 
 export const PollingPanel = (props) => {
   // 根据sub决定显示哪一段代码
@@ -162,16 +164,17 @@ export const PollingPanel = (props) => {
       code = codeHoc;
       break;
     default:
-      break
+      break;
   }
 
   return (
     <div>
-      <Paper style={{padding: 20, marginBottom: 40, maxWidth: 600, borderRadius: 5, backgroundColor: '#f8f8f8'}}
+      <Paper style={{padding: 20, marginBottom: 40, maxWidth: 600, borderRadius: 5,
+                     backgroundColor: '#f8f8f8'}}
              zDepth={2}>
         {props.sub === '2b' ? <PollingDemo2b /> : <WrappedComponent />}
       </Paper>
-      {createCollapsedPanel([{header: 'Source code', component: <CodeSnippet code={code}/>}])}
+      {createCollapsedPanel([ {header: 'Source code', component: <CodeSnippet code={code}/>} ])}
     </div>
   );
 };

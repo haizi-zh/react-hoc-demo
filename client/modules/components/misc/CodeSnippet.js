@@ -9,7 +9,8 @@ import {Highlight} from './Highlight';
 
 export const CodeSnippet = (props) => {
   return (
-    <Paper style={{padding: 20, maxWidth: 800, borderRadius: 5, backgroundColor: '#f8f8f8'}} zDepth={4}>
+    <Paper style={{padding: 20, maxWidth: 800, borderRadius: 5,
+                   backgroundColor: '#f8f8f8'}} zDepth={4}>
       <Highlight className="javascript">
         {(props || {}).code}
       </Highlight>
